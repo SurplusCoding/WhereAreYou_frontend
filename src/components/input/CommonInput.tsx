@@ -16,6 +16,7 @@ const InputBox = styled.input`
   border: none;
   color: white;
   font-size: 15px;
+  padding: 3%;
 `;
 
 export default CommonInput;
