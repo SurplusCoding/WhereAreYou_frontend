@@ -1,7 +1,18 @@
-const Home = () => {
-  return (
-   <h1>main</h1>
-  )
-}
+import styled from "styled-components";
+import Home from "./layout/Home";
 
-export default Home;
+const HomePage = () => {
+  return (
+    <Layout>
+      <Home />
+    </Layout>
+  );
+};
+
+const Layout = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+`;
+
+export default HomePage;
