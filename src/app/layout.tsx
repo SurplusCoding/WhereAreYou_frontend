@@ -3,11 +3,11 @@
 import "./globals.css";
 import React from "react";
 import {
-  RecoilRoot,
-  atom,
-  selector,
-  useRecoilState,
-  useRecoilValue,
+    RecoilRoot,
+    atom,
+    selector,
+    useRecoilState,
+    useRecoilValue,
 } from "recoil";
 
 // export const metadata = {
@@ -16,15 +16,15 @@ import {
 // };
 
 export default function RootLayout({
-  children,
+    children,
 }: {
-  children: React.ReactNode;
+    children: React.ReactNode;
 }) {
-  return (
-    <html lang="en">
-      <body>
-        <RecoilRoot>{children}</RecoilRoot>
-      </body>
-    </html>
-  );
+    return (
+        <html lang="ko">
+            <body>
+                <RecoilRoot>{children}</RecoilRoot>
+            </body>
+        </html>
+    );
 }
