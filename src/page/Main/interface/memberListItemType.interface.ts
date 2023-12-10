@@ -1,5 +1,5 @@
-import UserProps from "./usePropsType.interface";
+import UserProps from "./userPropsType.interface";
 
 export default interface MemberListItemType {
-    children: UserProps;
+  children: UserProps;
 }
