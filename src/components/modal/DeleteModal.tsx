@@ -5,17 +5,32 @@ import { useRecoilState } from "recoil";
 import React from "react";
 import deleteModal from "@/store/deleteModal.store";
 import CommonButton from "../button/CommonButton";
-import { deleteGroup } from "@/api";
+import { deleteGroup, quitGroup } from "@/api";
 import currentGroupStore from "@/store/currentGroup.store";
+import refreshStore from "@/store/refresh.store";
+import currentConditionStore from "@/store/currentCondition.store";
 
 const DeleteModal = () => {
+  const [userData] = useRecoilState(currentConditionStore);
   const [isModal, setIsModal] = useRecoilState(deleteModal);
   const [currentGroup] = useRecoilState(currentGroupStore);
+  const [refresh, setRefresh] = useRecoilState(refreshStore);
 
   const hadleDeleteGroup = async (teamId: number) => {
+    if (userData.name !== currentGroup.manager)
+      return alert("그룹 매니저만 삭제할 수 있습니다.");
     const result = await deleteGroup(teamId);
     if (result.success === false) return alert("그룹 삭제에 실패하였습니다.");
-    alert("그룹 삭제에 성공하였습니다.");
+    alert(`${currentGroup.name}을/를 삭제하였습니다.`);
+    setRefresh((prev) => !prev);
+    setIsModal(false);
+  };
+
+  const handleQuitGroup = async () => {
+    const result = await quitGroup(currentGroup.id);
+    if (result.success === false) return alert("그룹 나가기에 실패하였습니다.");
+    alert(`${currentGroup.name} 그룹을 나갔습니다.`);
+    setRefresh((prev) => !prev);
     setIsModal(false);
   };
 
@@ -27,7 +42,7 @@ const DeleteModal = () => {
     <Wrapper onClick={() => setIsModal(false)}>
       <ModalBox onClick={handleChildClick}>
         <ModalHeader>
-          <ModalText>Delete Group</ModalText>
+          <ModalText>Delete/Quit Group</ModalText>
           <Cancel
             src={CancelIcon}
             alt="CANCEL_ICON"
@@ -36,16 +51,37 @@ const DeleteModal = () => {
         </ModalHeader>
         <ModalContent>
           <ModalText>
-            그룹 {currentGroup.name} 를/을 삭제하시겠습니까?
+            그룹 {currentGroup.name}[{currentGroup.id}]
           </ModalText>
-          <CommonButton
-            width="90%"
-            height="15%"
-            margin="auto auto 2vh auto"
-            onClick={() => hadleDeleteGroup(currentGroup.id)}
-          >
-            Delete Group
-          </CommonButton>
+          {userData.name === currentGroup.manager ? (
+            <ButtonContainer>
+              <CommonButton
+                width="49%"
+                height="100%"
+                margin="auto auto 2vh auto"
+                onClick={() => hadleDeleteGroup(currentGroup.id)}
+              >
+                Delete Group
+              </CommonButton>
+              <CommonButton
+                width="49%"
+                height="100%"
+                margin="auto auto 2vh auto"
+                onClick={handleQuitGroup}
+              >
+                Quit Group
+              </CommonButton>
+            </ButtonContainer>
+          ) : (
+            <CommonButton
+              width="90%"
+              height="15%"
+              margin="auto auto 2vh auto"
+              onClick={handleQuitGroup}
+            >
+              Quit Group
+            </CommonButton>
+          )}
         </ModalContent>
       </ModalBox>
     </Wrapper>
@@ -87,6 +123,8 @@ const ModalText = styled.div`
   color: white;
   font-size: 18px;
   margin-left: 5%;
+  /* margin-bottom: auto;
+  margin-top: auto; */
 `;
 
 const ModalContent = styled.div`
@@ -102,6 +140,13 @@ const Cancel = styled(Image)`
   height: 2.5vh;
   margin: 0 1.5vh 0 auto;
   cursor: pointer;
+`;
+
+const ButtonContainer = styled.div`
+  width: 90%;
+  margin: auto auto 2vh auto;
+  display: flex;
+  justify-content: center;
 `;
 
 export default DeleteModal;

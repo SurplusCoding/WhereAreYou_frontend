@@ -1,14 +1,27 @@
-import { ReactNode } from "react";
 import styled from "styled-components";
+import React from "react";
 import MemberListItemType from "../interface/memberListItemType.interface";
+import { useRecoilState } from "recoil";
+import kickUserStore from "@/store/kickUser.store";
+import kickModal from "@/store/kickModal.store";
 
 const MemberListItem = ({ children }: MemberListItemType) => {
+  const [user, setUser] = useRecoilState(kickUserStore);
+  const [isModal, setIsModal] = useRecoilState(kickModal);
+
+  const onClickEvent = () => {
+    setUser({ userId: children.userId, name: children.name });
+    setIsModal(true);
+  };
+
   return (
-    <ListItemWrapper>
-      <MemberName>{children.name}</MemberName>
-      <div>
-        {children.place}, {children.what}, {children.howLong}
-      </div>
+    <ListItemWrapper onClick={onClickEvent}>
+      <MemberName>
+        {children.name}[{children.userId}]
+      </MemberName>
+      <Status>
+        {children.place} | {children.what} | {children.howLong}m
+      </Status>
     </ListItemWrapper>
   );
 };
@@ -22,12 +35,20 @@ const ListItemWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 `;
 
 const MemberName = styled.div`
-  font-size: 20px;
-  width: 100%;
+  font-size: 18px;
+  margin-left: 1vw;
   color: white;
+`;
+
+const Status = styled.div`
+  font-size: 15px;
+  color: white;
+  margin-left: auto;
+  margin-right: 1vw;
 `;
 
 export default MemberListItem;

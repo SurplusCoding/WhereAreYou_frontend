@@ -1,12 +1,12 @@
 import { atom } from "recoil";
 
 const currentConditionStore = atom({
-  key: "conditionSotre",
+  key: "conditionStore",
   default: {
     email: "",
     name: "",
     place: "",
-    howLong: "",
+    howLong: 0,
     what: "",
   },
 });

@@ -13,20 +13,29 @@ interface SignUpPropsType {
 }
 
 interface StatuesPropsType {
-  place?: string;
-  howLong?: string;
-  what?: string;
+  place: string;
+  howLong: number;
+  what: string;
+}
+
+export interface PresetPropsType {
+  presetId: number;
+  place: string;
+  howLong: number;
+  what: string;
+}
+
+export interface KickUserPropsType {
+  teamId: number;
+  userId: number;
 }
 
 export const loginUser = async ({ email, password }: LoginPropsType) => {
   try {
-    const response = await axios.post(
-      "http://192.168.219.194:8088/user/login",
-      {
-        email,
-        password,
-      }
-    );
+    const response = await axios.post("http://10.150.149.136:8090/user/login", {
+      email,
+      password,
+    });
     return response.data;
   } catch (error) {
     console.error(error);
@@ -37,7 +46,7 @@ export const loginUser = async ({ email, password }: LoginPropsType) => {
 export const signUp = async ({ name, email, password }: SignUpPropsType) => {
   try {
     const response = await axios.post(
-      "http://192.168.219.194:8088/user/signup",
+      "http://10.150.149.136:8090/user/signup",
       {
         name,
         email,
@@ -53,7 +62,7 @@ export const signUp = async ({ name, email, password }: SignUpPropsType) => {
 
 export const getUser = async () => {
   try {
-    const response = await axios.get("http://192.168.219.194:8088/user", {
+    const response = await axios.get("http://10.150.149.136:8090/user", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("access_token")}`,
       },
@@ -67,7 +76,7 @@ export const getUser = async () => {
 
 export const deleteUser = async () => {
   try {
-    const response = await axios.delete("http://192.168.219.194:8088/user", {
+    const response = await axios.delete("http://10.150.149.136:8090/user", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("access_token")}`,
       },
@@ -82,7 +91,7 @@ export const deleteUser = async () => {
 export const getMembers = async (teamId: number) => {
   try {
     const response = await axios.get(
-      `http://192.168.219.194:8088/belong/${teamId}/user`,
+      `http://10.150.149.136:8090/belong/${teamId}/user`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -101,14 +110,11 @@ export const getMembers = async (teamId: number) => {
 
 export const getGroups = async () => {
   try {
-    const response = await axios.get(
-      `http://192.168.219.194:8088/belong/team`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-      }
-    );
+    const response = await axios.get(`http://10.150.149.136:8090/belong/team`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+      },
+    });
     return response.data;
   } catch (error) {
     console.log(error);
@@ -122,7 +128,7 @@ export const getGroups = async () => {
 export const createGroup = async (name: string) => {
   try {
     const response = await axios.post(
-      "http://192.168.219.194:8088/team",
+      "http://10.150.149.136:8090/team",
       {
         name,
       },
@@ -142,7 +148,7 @@ export const createGroup = async (name: string) => {
 export const deleteGroup = async (teamId: number) => {
   try {
     const response = await axios.delete(
-      `http://192.168.219.194:8088/team/${teamId}`,
+      `http://10.150.149.136:8090/team/${teamId}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -162,7 +168,8 @@ export const deleteGroup = async (teamId: number) => {
 export const joinGroup = async (teamId: number) => {
   try {
     const response = await axios.post(
-      `http://192.168.219.194:8088/team/${teamId}`,
+      `http://10.150.149.136:8090/belong/${teamId}`,
+      {},
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -179,7 +186,7 @@ export const joinGroup = async (teamId: number) => {
 export const setStatus = async ({ place, howLong, what }: StatuesPropsType) => {
   try {
     const response = await axios.put(
-      `http://192.168.219.194:8088/user/status`,
+      `http://10.150.149.136:8090/user/status`,
       {
         place,
         howLong,
@@ -198,9 +205,9 @@ export const setStatus = async ({ place, howLong, what }: StatuesPropsType) => {
   }
 };
 
-export const getPreset = async () => {
+export const getPresets = async () => {
   try {
-    const response = await axios.get("http://192.168.219.194:8088/preset", {
+    const response = await axios.get("http://10.150.149.136:8090/preset", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("access_token")}`,
       },
@@ -219,7 +226,7 @@ export const createPreset = async ({
 }: StatuesPropsType) => {
   try {
     const response = await axios.post(
-      `http://192.168.219.194:8088/preset`,
+      `http://10.150.149.136:8090/preset`,
       {
         place,
         howLong,
@@ -235,5 +242,83 @@ export const createPreset = async ({
   } catch (error) {
     console.error(error);
     return { success: false, message: "프리셋 생성에 실패하였습니다." };
+  }
+};
+
+export const setPreset = async ({
+  presetId,
+  place,
+  howLong,
+  what,
+}: PresetPropsType) => {
+  try {
+    const response = await axios.put(
+      `http://10.150.149.136:8090/preset/${presetId}`,
+      {
+        place,
+        howLong,
+        what,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return { success: false, message: "프리셋 수정에 실패하였습니다." };
+  }
+};
+
+export const deletePreset = async (presetId: number) => {
+  try {
+    const response = await axios.delete(
+      `http://10.150.149.136:8090/preset/${presetId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return { success: false, message: "프리셋 삭제에 실패하였습니다." };
+  }
+};
+
+export const kickUser = async ({ teamId, userId }: KickUserPropsType) => {
+  try {
+    const response = await axios.delete(
+      `http://10.150.149.136:8090/belong/${teamId}/${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return { success: false, message: "강제 퇴장에 실패하였습니다." };
+  }
+};
+
+export const quitGroup = async (teamId: number) => {
+  try {
+    const response = await axios.delete(
+      `http://10.150.149.136:8090/belong/${teamId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return { success: false, message: "그룹 나가기에 실패하였습니다." };
   }
 };

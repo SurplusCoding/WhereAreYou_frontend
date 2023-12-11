@@ -15,13 +15,14 @@ import UserProps from "../interface/userPropsType.interface";
 import GroupProps from "../interface/groupPropsType.interface";
 import joinModal from "@/store/joinModal.store";
 import refreshStore from "@/store/refresh.store";
+import groupListStore from "@/store/groupList.store";
 
 const MyGroup = () => {
   const [isModal, setIsModal] = useRecoilState(settingModalStore);
   const [isModal2, setIsModal2] = useRecoilState(createModal);
   const [isModal3, setIsModal3] = useRecoilState(joinModal);
   const [currentGroup] = useRecoilState(currentGroupStore);
-  const [groupList, setGroupList] = React.useState([]);
+  const [groupList, setGroupList] = useRecoilState(groupListStore);
   const [memberList, setMemberList] = React.useState([]);
   const [refresh] = useRecoilState(refreshStore);
 
@@ -31,7 +32,7 @@ const MyGroup = () => {
 
   React.useEffect(() => {
     handleGroupList();
-  }, []);
+  }, [refresh]);
 
   const handleMemberList = async (teamId: number) => {
     const result = await getMembers(teamId);

@@ -16,6 +16,9 @@ const Signup = () => {
   const [password, setPassword] = React.useState("");
 
   const handleSignup = async () => {
+    if (name === "") return alert("이름을 입력해주세요.");
+    if (email === "") return alert("이메일을 입력해주세요.");
+    if (password === "") return alert("비밀번호를 입력해주세요.");
     const result = await signUp({ name, email, password });
     if (result.success === false) return alert("회원가입에 실패하였습니다.");
     alert("회원가입에 성공하였습니다.");

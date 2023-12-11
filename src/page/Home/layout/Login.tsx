@@ -21,6 +21,8 @@ const Login = () => {
   const router = useRouter();
 
   const handleLogin = async () => {
+    if (email === "") return alert("이메일이 입력되지 않았습니다.");
+    if (password === "") return alert("비밀번호가 입력되지 않았습니다.");
     const result = await loginUser({ email, password });
     if (result.success === false) return alert("로그인에 실패하였습니다.");
     alert("로그인에 성공하였습니다.");

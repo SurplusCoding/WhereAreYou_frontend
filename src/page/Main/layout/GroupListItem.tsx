@@ -13,7 +13,13 @@ const GroupListItem = ({ children }: ListItemType) => {
 
   return (
     <Container
-      onChange={() => setCurrentGroup({ id: children.id, name: children.name })}
+      onChange={() =>
+        setCurrentGroup({
+          id: children.id,
+          name: children.name,
+          manager: children.manager,
+        })
+      }
     >
       <GroupInput type="radio" name="group" id={children.name} />
       <GroupLabel htmlFor={children.name}>
@@ -46,33 +52,32 @@ const GroupLabel = styled.label`
   height: 100%;
   position: relative;
   border-radius: 5px;
-
+  transition: all 0.3s;
   display: flex;
 `;
 
 const GroupInput = styled.input`
   position: absolute;
   font-size: 30px;
-  color: white;
   visibility: hidden;
 
   &:checked + label {
     border-radius: 5px;
-    background-color: #383b41;
-    color: white;
+    background-color: #5765f2;
   }
 `;
 
 const GroupName = styled.div`
   height: 1em;
   line-height: 50%;
-  margin: auto 0;
+  margin: auto 1vw;
+  color: white;
 `;
 
 const GroupMenu = styled(Image)`
   width: auto;
   height: 4.5vh;
-  margin: 4% 0 0 auto;
+  margin: 3.5% 0 0 auto;
   cursor: pointer;
 `;
 

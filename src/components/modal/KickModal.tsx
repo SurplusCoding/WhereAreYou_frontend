@@ -3,32 +3,31 @@ import styled from "styled-components";
 import CancelIcon from "@/page/Main/assets/cancelIcon.svg";
 import { useRecoilState } from "recoil";
 import React from "react";
-import Column from "@/components/flex/Column";
-import joinModal from "@/store/joinModal.store";
-import CommonInput from "../input/CommonInput";
 import CommonButton from "../button/CommonButton";
-import { getGroups, joinGroup } from "@/api";
-import groupListStore from "@/store/groupList.store";
+import { kickUser } from "@/api";
+import kickModal from "@/store/kickModal.store";
+import kickUserStore from "@/store/kickUser.store";
+import currentGroupStore from "@/store/currentGroup.store";
+import currentConditionStore from "@/store/currentCondition.store";
 
-const JoinModal = () => {
-  const [isModal, setIsModal] = useRecoilState(joinModal);
-  const [groupList, setGroupList] = useRecoilState(groupListStore);
-  const [groupId, setGroupId] = React.useState("");
+const KickModal = () => {
+  const [isModal, setIsModal] = useRecoilState(kickModal);
+  const [user] = useRecoilState(kickUserStore);
+  const [currentGroup] = useRecoilState(currentGroupStore);
+  const [currentCondition] = useRecoilState(currentConditionStore);
 
-  const hadleJoinGroup = async (groupId: string) => {
-    if (!groupId) return alert("그룹 아이디를 입력해주세요.");
-    if (groupId.includes(".")) return alert("올바른 값을 입력해주세요.");
-    const result = await joinGroup(parseInt(groupId));
-    if (result.success === false) return alert("그룹 참가에 실패하였습니다.");
-    alert("그룹 참가에 성공하였습니다.");
-    handleGroupList();
+  const hadleDeleteMember = async () => {
+    if (currentCondition.name !== currentGroup.manager)
+      return alert("그룹 매니저만 강퇴할 수 있습니다.");
+    if (currentCondition.name === user.name)
+      return alert("스스로는 강퇴할 수 없습니다.");
+    const result = await kickUser({
+      teamId: currentGroup.id,
+      userId: user.userId,
+    });
+    if (result.success === false) return alert("멤버 강퇴에 실패하였습니다.");
+    alert(`${user.name}님을 강퇴하였습니다.`);
     setIsModal(false);
-  };
-
-  const handleGroupList = async () => {
-    const result = await getGroups();
-    if (result.success === false) return -1;
-    setGroupList(result);
   };
 
   const handleChildClick = (event: React.MouseEvent) => {
@@ -39,7 +38,7 @@ const JoinModal = () => {
     <Wrapper onClick={() => setIsModal(false)}>
       <ModalBox onClick={handleChildClick}>
         <ModalHeader>
-          <ModalText>Join Group</ModalText>
+          <ModalText>Kick Member</ModalText>
           <Cancel
             src={CancelIcon}
             alt="CANCEL_ICON"
@@ -47,25 +46,16 @@ const JoinModal = () => {
           />
         </ModalHeader>
         <ModalContent>
-          <Column gap="2vh">
-            <ModalText>Group Id</ModalText>
-            <CommonInput
-              width="20vw"
-              height="4vh"
-              margin="0 2.2vw"
-              type="number"
-              min="1"
-              max="100"
-              onChange={(e) => setGroupId(e.target.value)}
-            />
-          </Column>
+          <ModalText>
+            {user.name}[{user.userId}] 님을 강퇴하시겠습니까?
+          </ModalText>
           <CommonButton
             width="90%"
             height="15%"
             margin="auto auto 2vh auto"
-            onClick={() => hadleJoinGroup(groupId)}
+            onClick={hadleDeleteMember}
           >
-            Join Group
+            Kick Member
           </CommonButton>
         </ModalContent>
       </ModalBox>
@@ -125,4 +115,4 @@ const Cancel = styled(Image)`
   cursor: pointer;
 `;
 
-export default JoinModal;
+export default KickModal;

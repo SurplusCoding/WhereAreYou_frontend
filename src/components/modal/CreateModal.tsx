@@ -8,16 +8,19 @@ import createModal from "@/store/createModal.store";
 import CommonInput from "../input/CommonInput";
 import CommonButton from "../button/CommonButton";
 import { createGroup } from "@/api";
+import refreshStore from "@/store/refresh.store";
 
 const CreateModal = () => {
   const [isModal, setIsModal] = useRecoilState(createModal);
+  const [refresh, setRefresh] = useRecoilState(refreshStore);
   const [groupName, setGroupName] = React.useState("");
 
   const hadleCreateGroup = async (name: string) => {
     if (groupName === "") return alert("그룹 이름을 입력해주세요.");
     const result = await createGroup(name);
     if (result.success === false) return alert("그룹 생성에 실패하였습니다.");
-    alert("그룹 생성에 성공하였습니다.");
+    alert("그룹을 생성하였습니다.");
+    setRefresh((prev) => !prev);
     setIsModal(false);
   };
 
